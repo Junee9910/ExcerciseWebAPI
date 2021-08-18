@@ -1,4 +1,6 @@
-﻿using ExcerciseWebAPI.Persistence;
+﻿using AutoMapper;
+using ExcerciseWebAPI.Models;
+using ExcerciseWebAPI.Persistence;
 using ExcerciseWebAPI.Persistence.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,27 +16,48 @@ namespace ExcerciseWebAPI.Controllers
     public class StudentController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public StudentController(ApplicationDbContext context)
+        public StudentController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Student>> Get(int id)
+        {
+            var student = await _context.Students.FindAsync(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+            var result = _mapper.Map<StudentModel>(student);
+            return Ok(result);
         }
         [HttpGet("students")]
-        public async Task<IActionResult> GetStudentAsync()
+        public async Task<IActionResult> GetList()
         {
-            var students = await _context.Students.AsNoTracking().ToListAsync();
-            return Ok(students);
+            var students = await _context.Students.ToListAsync();
+            //var result = students.Select(x => new StudentModel
+            //{
+            //    StudentID=x.StudentID,
+            //    LastName=x.LastName,
+            //    FirstMidName=x.FirstMidName
+            //});
+            var result = _mapper.Map<List<StudentModel>>(students); 
+            return Ok(result);
         }
         [HttpPost]
-        public async Task<IActionResult> PostStudentAsync(Student student)
+        public async Task<ActionResult<StudentModel>> Create(Student student)
         {
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetStudentAsync", student);
+            return CreatedAtAction("Get", student);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudentAsync(int id, Student student)
+        public async Task<IActionResult> Update(int id, Student student)
         {
             if(id!=student.StudentID)
             {
@@ -60,7 +83,7 @@ namespace ExcerciseWebAPI.Controllers
             return NoContent();
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudentAsync(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var student = await _context.Students.FindAsync(id);
             if (student==null)
