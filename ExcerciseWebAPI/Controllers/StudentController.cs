@@ -16,80 +16,78 @@ namespace ExcerciseWebAPI.Controllers
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IStudentService _studentService;
 
-        public StudentController(IStudentService studentService)
+        public StudentController(IMapper mapper,IStudentService studentService)
         {
+            _mapper = mapper;
             _studentService = studentService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> Get(int id)
+        [HttpGet("{id}", Name = "GetStudent")]
+        public IActionResult Get(int id)
         {
-            var student = await _studentService.Get(id);
+            var student = _studentService.Get(id);
 
             if (student == null)
             {
                 return NotFound();
             }
-            return Ok(student);
+            return Ok( _mapper.Map<StudentListModel>(student));
         }
         [HttpGet("students")]
-        public async Task<IActionResult> GetList()
+        public ActionResult<IEnumerable<StudentListModel>> GetList()
         {
-            var students = await _studentService.GetList();
-            return Ok(students);
+            var students = _studentService.GetList();
+            return Ok(_mapper.Map<IEnumerable<StudentListModel>>(students));
         }
-        //[HttpPost]
-        //public async Task<ActionResult<StudentListModel>> Create(Student student)
-        //{
-        //    _context.Students.Add(student);
-        //    await _context.SaveChangesAsync();
+        [HttpPost]
+        public ActionResult<StudentListModel> Create(StudentCreateModel student)
+        {
+            var studentEntity = _mapper.Map<Student>(student);
+            _studentService.Add(studentEntity);
+            _studentService.Save();
 
-        //    return CreatedAtAction("Get", student);
-        //}
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(int id, Student student)
-        //{
-        //    if (id != student.StudentID)
-        //    {
-        //        return BadRequest();
-        //    }
-        //    _context.Entry(student).State = EntityState.Modified;
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!StudentExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+            var studentToReturn = _mapper.Map<StudentListModel>(studentEntity);
+            return CreatedAtRoute("GetStudent",
+                new { studentID = studentToReturn.StudentID }, studentToReturn);
+        }
 
-        //    return NoContent();
-        //}
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var student = await _context.Students.FindAsync(id);
-        //    if (student == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    _context.Students.Remove(student);
-        //    await _context.SaveChangesAsync();
+        [HttpPut("{id}")]
+        public ActionResult Update(int id, StudentCreateModel student)
+        {
+            if (!_studentService.StudentExists(id))
+            {
+                return NotFound();
+            }
+            var studentRepo = _studentService.Get(id);
+            if (studentRepo==null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(student, studentRepo);
+            _studentService.Update(studentRepo);
+            _studentService.Save();
 
-        //    return NoContent();
-        //}
-        //private bool StudentExists(int id)
-        //{
-        //    return _context.Students.Any(s => s.StudentID == id);
-        //}
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            if (!_studentService.StudentExists(id))
+            {
+                return NotFound();
+            }
+            var studentRepo = _studentService.Get(id);
+            if (studentRepo == null)
+            {
+                return NotFound();
+            }
+            _studentService.Delete(studentRepo);
+            _studentService.Save();
+
+            return NoContent();
+        }
     }
 }

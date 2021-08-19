@@ -1,4 +1,5 @@
 ﻿using ExcerciseWebAPI.Models;
+using ExcerciseWebAPI.Persistence.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,12 @@ namespace ExcerciseWebAPI.Services
 {
     public interface IStudentService
     {
-        Task<StudentListModel> Get(int id);
-        Task<List<StudentListModel>> GetList();
+        Student Get(int id);
+        IEnumerable<Student> GetList();
+        void Add(Student student);
+        void Update(Student student);
+        void Delete(Student student);
+        bool Save();
+        bool StudentExists(int id);
     }
 }

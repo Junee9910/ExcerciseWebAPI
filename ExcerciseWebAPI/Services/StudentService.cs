@@ -14,77 +14,39 @@ namespace ExcerciseWebAPI.Services
     public class StudentService : IStudentService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public StudentService(ApplicationDbContext context, IMapper mapper)
+        public StudentService(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
-        public async Task<StudentListModel> Get(int id)
+        public Student Get(int id)
         {
-            var student = await _context.Students.FindAsync(id);
-
-            return _mapper.Map<StudentListModel>(student);
+            return _context.Students.FirstOrDefault(x => x.StudentID == id);
         }
 
-        public async Task<List<StudentListModel>> GetList()
+        public IEnumerable<Student> GetList()
         {
-            var students = await _context.Students.ToListAsync();
-            //var result = students.Select(x => new StudentModel
-            //{
-            //    StudentID=x.StudentID,
-            //    LastName=x.LastName,
-            //    FirstMidName=x.FirstMidName
-            //});
-            return _mapper.Map<List<StudentListModel>>(students);
+            return _context.Students.ToList<Student>();
         }
-        //[HttpPost]
-        //public async Task<ActionResult<StudentListModel>> Create(Student student)
-        //{
-        //    _context.Students.Add(student);
-        //    await _context.SaveChangesAsync();
+        public void Add(Student student)
+        {
+            _context.Students.Add(student);
+        }
+        public void Update(Student student)
+        { }
 
-        //}
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(int id, Student student)
-        //{
-        //    _context.Entry(student).State = EntityState.Modified;
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!StudentExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    var student = await _context.Students.FindAsync(id);
-        //    if (student == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    _context.Students.Remove(student);
-        //    await _context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-        //private bool StudentExists(int id)
-        //{
-        //    return _context.Students.Any(s => s.StudentID == id);
-        //}
+        public async void Delete(Student student)
+        {
+            _context.Students.Remove(student);
+        }
+        public bool StudentExists(int id)
+        {
+            return _context.Students.Any(s => s.StudentID == id);
+        }
+        public bool Save()
+        {
+            return (_context.SaveChanges() >= 0);
+        }
     }
 }
