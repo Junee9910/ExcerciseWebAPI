@@ -2,7 +2,6 @@
 using ExcerciseWebAPI.Models;
 using ExcerciseWebAPI.Persistence;
 using ExcerciseWebAPI.Persistence.Entities;
-using ExcerciseWebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,35 +9,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExcerciseWebAPI.Controllers
+namespace ExcerciseWebAPI.Services
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class StudentController : ControllerBase
+    public class StudentService : IStudentService
     {
-        private readonly IStudentService _studentService;
+        private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public StudentController(IStudentService studentService)
+        public StudentService(ApplicationDbContext context, IMapper mapper)
         {
-            _studentService = studentService;
+            _context = context;
+            _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> Get(int id)
+        public async Task<StudentListModel> Get(int id)
         {
-            var student = await _studentService.Get(id);
+            var student = await _context.Students.FindAsync(id);
 
-            if (student == null)
-            {
-                return NotFound();
-            }
-            return Ok(student);
+            return _mapper.Map<StudentListModel>(student);
         }
-        [HttpGet("students")]
-        public async Task<IActionResult> GetList()
+
+        public async Task<List<StudentListModel>> GetList()
         {
-            var students = await _studentService.GetList();
-            return Ok(students);
+            var students = await _context.Students.ToListAsync();
+            //var result = students.Select(x => new StudentModel
+            //{
+            //    StudentID=x.StudentID,
+            //    LastName=x.LastName,
+            //    FirstMidName=x.FirstMidName
+            //});
+            return _mapper.Map<List<StudentListModel>>(students);
         }
         //[HttpPost]
         //public async Task<ActionResult<StudentListModel>> Create(Student student)
@@ -46,15 +46,10 @@ namespace ExcerciseWebAPI.Controllers
         //    _context.Students.Add(student);
         //    await _context.SaveChangesAsync();
 
-        //    return CreatedAtAction("Get", student);
         //}
         //[HttpPut("{id}")]
         //public async Task<IActionResult> Update(int id, Student student)
         //{
-        //    if (id != student.StudentID)
-        //    {
-        //        return BadRequest();
-        //    }
         //    _context.Entry(student).State = EntityState.Modified;
         //    try
         //    {

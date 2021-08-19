@@ -12,7 +12,7 @@ namespace ExcerciseWebAPI.Mappers
     {
         public StudentProfile()
         {
-            CreateMap<Student, StudentModel>();
+            CreateMap<Student, StudentListModel>();
         }
     }
 }

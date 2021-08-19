@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ExcerciseWebAPI.Models
 {
-    public class StudentModel
+    public class StudentListModel
     {
         public int StudentID { get; set; }
         public string LastName { get; set; }

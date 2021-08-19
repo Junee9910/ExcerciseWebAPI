@@ -1,4 +1,5 @@
 using ExcerciseWebAPI.Persistence;
+using ExcerciseWebAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -41,6 +42,7 @@ namespace ExcerciseWebAPI
                 x.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext)));
             });
             services.AddAutoMapper(x => x.AddMaps(Assembly.GetExecutingAssembly()));
+            services.AddScoped<IStudentService, StudentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
