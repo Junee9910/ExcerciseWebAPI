@@ -44,9 +44,9 @@ namespace ExcerciseWebAPI.Services
         public void Update(Student student)
         { }
 
-        public async void Delete(Student student)
+        public void Delete(Student student)
         {
-            _context.Students.Remove(student);
+             _context.Students.Remove(student);
         }
         public bool StudentExists(int id)
         {

@@ -14,6 +14,12 @@ namespace ExcerciseWebAPI.Mappers
         {
             CreateMap<Student, StudentListModel>();
             CreateMap<StudentCreateModel, Student>();
+            CreateMap<OfficeAssignment, OfficeAssignmentModel>();
+            CreateMap<Instructor, InstructorListModel>()
+                .ForMember(
+                dest=>dest.FullName,
+                otp=>otp.MapFrom(src=>$"{src.LastName} {src.FirstMidName}")
+                );
         }
     }
 }
