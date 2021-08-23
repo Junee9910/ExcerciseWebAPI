@@ -37,9 +37,9 @@ namespace ExcerciseWebAPI.Controllers
             return Ok( _mapper.Map<StudentListModel>(student));
         }
         [HttpGet("students")]
-        public ActionResult<IEnumerable<StudentListModel>> GetList()
+        public ActionResult<IEnumerable<StudentListModel>> GetList([FromQuery] string userName, [FromQuery] OwnerParameters ownerParameters)
         {
-            var students = _studentService.GetList();
+            var students = _studentService.GetList(userName, ownerParameters);
             return Ok(_mapper.Map<IEnumerable<StudentListModel>>(students));
         }
         [HttpPost]

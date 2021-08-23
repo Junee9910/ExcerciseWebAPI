@@ -25,9 +25,17 @@ namespace ExcerciseWebAPI.Services
             return _context.Students.FirstOrDefault(x => x.StudentID == id);
         }
 
-        public IEnumerable<Student> GetList()
+        public IEnumerable<Student> GetList(string userName, OwnerParameters ownerParameters)
         {
-            return _context.Students.ToList<Student>();
+            var result = _context.Students.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(userName))
+            {
+                userName = userName.Trim();
+                result = result.Where(x => x.FirstMidName.Contains(userName)||x.LastName.Contains(userName)).OrderByDescending(x=>x.StudentID);
+            }
+            return result.Skip((ownerParameters.PageNumber-1)*ownerParameters.PageSize)
+                .Take(ownerParameters.PageSize)
+                .ToList<Student>();
         }
         public void Add(Student student)
         {

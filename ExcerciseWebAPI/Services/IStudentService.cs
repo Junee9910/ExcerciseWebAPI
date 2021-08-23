@@ -10,7 +10,7 @@ namespace ExcerciseWebAPI.Services
     public interface IStudentService
     {
         Student Get(int id);
-        IEnumerable<Student> GetList();
+        IEnumerable<Student> GetList(string userName, OwnerParameters ownerParameters);
         void Add(Student student);
         void Update(Student student);
         void Delete(Student student);
