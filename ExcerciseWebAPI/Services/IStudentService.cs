@@ -9,12 +9,10 @@ namespace ExcerciseWebAPI.Services
 {
     public interface IStudentService
     {
-        Student Get(int id);
-        IEnumerable<Student> GetList(string userName, OwnerParameters ownerParameters);
-        void Add(Student student);
-        void Update(Student student);
-        void Delete(Student student);
-        bool Save();
-        bool StudentExists(int id);
+        StudentListModel Get(int id);
+        List<StudentListModel> GetList(StudentParams param);
+        StudentListModel Create(StudentCreateModel model);
+        StudentListModel Update(StudentEditModel model);
+        Student Delete(int id);
     }
 }

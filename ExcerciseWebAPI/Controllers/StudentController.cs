@@ -16,12 +16,10 @@ namespace ExcerciseWebAPI.Controllers
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IStudentService _studentService;
 
-        public StudentController(IMapper mapper,IStudentService studentService)
+        public StudentController(IStudentService studentService)
         {
-            _mapper = mapper;
             _studentService = studentService;
         }
 
@@ -34,59 +32,48 @@ namespace ExcerciseWebAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok( _mapper.Map<StudentListModel>(student));
+            return Ok(student);
         }
-        [HttpGet("students")]
-        public ActionResult<IEnumerable<StudentListModel>> GetList([FromQuery] string userName, [FromQuery] OwnerParameters ownerParameters)
-        {
-            var students = _studentService.GetList(userName, ownerParameters);
-            return Ok(_mapper.Map<IEnumerable<StudentListModel>>(students));
-        }
-        [HttpPost]
-        public ActionResult<StudentListModel> Create(StudentCreateModel student)
-        {
-            var studentEntity = _mapper.Map<Student>(student);
-            _studentService.Add(studentEntity);
-            _studentService.Save();
 
-            var studentToReturn = _mapper.Map<StudentListModel>(studentEntity);
-            return CreatedAtRoute("GetStudent",
-                new { studentID = studentToReturn.StudentID }, studentToReturn);
+        [HttpGet("list")]
+        public ActionResult<IEnumerable<StudentListModel>> GetList([FromQuery] StudentParams param)
+        {
+            var result = _studentService.GetList(param);
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public ActionResult<StudentListModel> Create(StudentCreateModel model)
+        {
+            var result = _studentService.Create(model);
+            return CreatedAtRoute("GetStudent", new { Id = result.StudentID }, result);
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(int id, StudentCreateModel student)
+        public ActionResult Update(int id, StudentEditModel student)
         {
-            if (!_studentService.StudentExists(id))
+            if (student.Id != id)
+            {
+                return BadRequest();
+            }
+
+            var entity = _studentService.Update(student);
+            if (entity == null)
             {
                 return NotFound();
             }
-            var studentRepo = _studentService.Get(id);
-            if (studentRepo==null)
-            {
-                return NotFound();
-            }
-            _mapper.Map(student, studentRepo);
-            _studentService.Update(studentRepo);
-            _studentService.Save();
 
             return NoContent();
         }
+
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            if (!_studentService.StudentExists(id))
+            var result = _studentService.Delete(id);
+            if (result == null)
             {
                 return NotFound();
             }
-            var studentRepo = _studentService.Get(id);
-            if (studentRepo == null)
-            {
-                return NotFound();
-            }
-            _studentService.Delete(studentRepo);
-            _studentService.Save();
-
             return NoContent();
         }
     }

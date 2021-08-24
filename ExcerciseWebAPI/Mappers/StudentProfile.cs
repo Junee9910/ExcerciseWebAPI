@@ -14,6 +14,31 @@ namespace ExcerciseWebAPI.Mappers
         {
             CreateMap<Student, StudentListModel>();
             CreateMap<StudentCreateModel, Student>();
+            CreateMap<StudentEditModel, Student>()
+                .ForMember(x => x.StudentID, opt => opt.Ignore());
+
+            CreateMap<InstructorCreateModel, Instructor>()
+                .ForMember(x => x.HireDate, opt => opt.MapFrom(x => DateTime.Now))
+                .ForMember(x => x.OfficeAssignment, opt => opt.MapFrom(x => string.IsNullOrWhiteSpace(x.Office)
+                    ? null
+                    : new OfficeAssignment
+                    {
+                        LocationIn = x.Office
+                    }));
+
+            CreateMap<InstructorEditModel, Instructor>()
+                .AfterMap((model, entity) =>
+                {
+                    if (string.IsNullOrWhiteSpace(model.Office))
+                    {
+                        entity.OfficeAssignment = null;
+                    }
+                    else
+                    {
+                        entity.OfficeAssignment ??= new OfficeAssignment();
+                        entity.OfficeAssignment.LocationIn = model.Office;
+                    }
+                });
             CreateMap<OfficeAssignment, OfficeAssignmentModel>();
             CreateMap<Instructor, InstructorListModel>()
                 .ForMember(

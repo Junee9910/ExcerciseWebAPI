@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ExcerciseWebAPI.Extensions;
 using ExcerciseWebAPI.Models;
 using ExcerciseWebAPI.Persistence;
 using ExcerciseWebAPI.Persistence.Entities;
@@ -14,47 +15,71 @@ namespace ExcerciseWebAPI.Services
     public class StudentService : IStudentService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public StudentService(ApplicationDbContext context)
+        public StudentService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public Student Get(int id)
+        public StudentListModel Get(int id)
         {
-            return _context.Students.FirstOrDefault(x => x.StudentID == id);
+            var entity = _context.Students.FirstOrDefault(x => x.StudentID == id);
+
+            return _mapper.Map<StudentListModel>(entity);
         }
 
-        public IEnumerable<Student> GetList(string userName, OwnerParameters ownerParameters)
+        public List<StudentListModel> GetList(StudentParams param)
         {
-            var result = _context.Students.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(userName))
+            var skip = (param.PageNumber.GetValueOrDefault() - 1) * param.PageSize.GetValueOrDefault();
+            var take = param.PageSize.GetValueOrDefault();
+
+            var result = _context.Students.AsQueryable()
+                .WhereIf(!string.IsNullOrWhiteSpace(param.Name),
+                    x => x.FirstMidName.Contains(param.Name) || x.LastName.Contains(param.Name))
+                .Skip(skip)
+                .Take(take)
+                .OrderBy(x => x.StudentID)
+                .ToList();
+
+            return _mapper.Map<List<StudentListModel>>(result);
+        }
+
+        public StudentListModel Create(StudentCreateModel model)
+        {
+            var entity = _mapper.Map<Student>(model);
+            _context.Students.Add(entity);
+            _context.SaveChanges();
+
+            return _mapper.Map<StudentListModel>(entity);
+        }
+
+        public StudentListModel Update(StudentEditModel model)
+        {
+            var entity = _context.Students.FirstOrDefault(x => x.StudentID == model.Id);
+            if (entity == null)
             {
-                userName = userName.Trim();
-                result = result.Where(x => x.FirstMidName.Contains(userName)||x.LastName.Contains(userName)).OrderByDescending(x=>x.StudentID);
+                return null;
             }
-            return result.Skip((ownerParameters.PageNumber-1)*ownerParameters.PageSize)
-                .Take(ownerParameters.PageSize)
-                .ToList<Student>();
-        }
-        public void Add(Student student)
-        {
-            _context.Students.Add(student);
-        }
-        public void Update(Student student)
-        { }
 
-        public void Delete(Student student)
-        {
-             _context.Students.Remove(student);
+            _mapper.Map(model, entity);
+            _context.SaveChanges();
+
+            return _mapper.Map<StudentListModel>(entity);
         }
-        public bool StudentExists(int id)
+
+        public Student Delete(int id)
         {
-            return _context.Students.Any(s => s.StudentID == id);
-        }
-        public bool Save()
-        {
-            return (_context.SaveChanges() >= 0);
+            var entity = _context.Students.FirstOrDefault(x => x.StudentID == id);
+            if (entity == null)
+            {
+                return null;
+            }
+
+            _context.Students.Remove(entity);
+            _context.SaveChanges();
+            return entity;
         }
     }
 }
