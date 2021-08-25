@@ -39,11 +39,11 @@ namespace ExcerciseWebAPI.Mappers
                         entity.OfficeAssignment.LocationIn = model.Office;
                     }
                 });
-            CreateMap<OfficeAssignment, OfficeAssignmentModel>();
+
             CreateMap<Instructor, InstructorListModel>()
                 .ForMember(
-                dest=>dest.FullName,
-                otp=>otp.MapFrom(src=>$"{src.LastName} {src.FirstMidName}")
+                dest => dest.FullName,
+                otp => otp.MapFrom(src => $"{src.LastName} {src.FirstMidName}")
                 );
         }
     }

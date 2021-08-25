@@ -1,4 +1,5 @@
-﻿using ExcerciseWebAPI.Persistence.Entities;
+﻿using ExcerciseWebAPI.Models;
+using ExcerciseWebAPI.Persistence.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,10 @@ namespace ExcerciseWebAPI.Services
 {
     public interface IInstructorService
     {
-        IEnumerable<Instructor> GetList();
+        InstructorListModel Get(int id);
+        List<InstructorListModel> GetList();
+        InstructorListModel Create(InstructorCreateModel model);
+        InstructorListModel Update(InstructorEditModel model);
+        OfficeAssignment Delete(int id);
     }
 }

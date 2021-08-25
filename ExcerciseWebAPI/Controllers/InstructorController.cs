@@ -14,20 +14,61 @@ namespace ExcerciseWebAPI.Controllers
     [Route("[controller]")]
     public class InstructorController:ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IInstructorService _instructorService;
-        public InstructorController(IMapper mapper, IInstructorService instructorService)
+        public InstructorController(IInstructorService instructorService)
         {
-            _mapper = mapper;
             _instructorService = instructorService;
         }
-        [HttpGet("instructors")]
+        [HttpGet("{id}", Name = "GetInstructor")]
+        public IActionResult Get(int id)
+        {
+            var student = _instructorService.Get(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+            return Ok(student);
+        }
+        [HttpGet("list")]
         public ActionResult<IEnumerable<InstructorListModel>> GetList()
         {
-            //var instructors = _instructorService.GetList();
-            //return Ok(_mapper.Map<IEnumerable<InstructorListModel>>(instructors));
             var instructors = _instructorService.GetList();
-            return Ok(_mapper.Map<List<Instructor>, List<InstructorListModel>>((List<Instructor>)instructors));
+            return Ok(instructors);
+        }
+        [HttpPost]
+        public ActionResult<StudentListModel> Create(InstructorCreateModel model)
+        {
+            var result = _instructorService.Create(model);
+            return CreatedAtRoute("GetInstructor", new { Id = result.InstructorID }, result);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Update(int id, InstructorEditModel instructor)
+        {
+            if (instructor.InstructorID != id)
+            {
+                return BadRequest();
+            }
+
+            var entity = _instructorService.Update(instructor);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var result = _instructorService.Delete(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }
