@@ -35,17 +35,16 @@ namespace ExcerciseWebAPI.Services
         }
         public List<InstructorListModel> GetList()
         {
-            var result = _context.Instructors.Include(x => x.OfficeAssignment)
+            var result = _context.Instructors.Include(x => x.OfficeAssignment).Include(x=>x.CourseAssignments).ThenInclude(x=>x.Course)
                 .Select(x => new InstructorListModel()
                 {
                     InstructorID = x.InstructorID,
                     FullName = x.Fullname,
-                    LocationIn = x.OfficeAssignment.LocationIn
+                    LocationIn = x.OfficeAssignment.LocationIn,
                 })
                 .AsQueryable()
                 .OrderBy(x => x.InstructorID)
                 .ToList();
-
             //return _mapper.Map<List<InstructorListModel>>(result);
             return result;
         }

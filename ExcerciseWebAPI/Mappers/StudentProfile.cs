@@ -12,7 +12,11 @@ namespace ExcerciseWebAPI.Mappers
     {
         public StudentProfile()
         {
-            CreateMap<Student, StudentListModel>();
+            CreateMap<Student, StudentListModel>()
+                .ForMember(
+                dest => dest.FullName,
+                otp => otp.MapFrom(src => $"{src.LastName} {src.FirstMidName}")
+                );
             CreateMap<StudentCreateModel, Student>();
             CreateMap<StudentEditModel, Student>()
                 .ForMember(x => x.StudentID, opt => opt.Ignore());
@@ -44,6 +48,12 @@ namespace ExcerciseWebAPI.Mappers
                 .ForMember(
                 dest => dest.FullName,
                 otp => otp.MapFrom(src => $"{src.LastName} {src.FirstMidName}")
+                );
+                //.ForMember(x=>x.Courses,otp=>otp.MapFrom(src=>$"{src}");
+            CreateMap<Course, CourseListModel>()
+                .ForMember(
+                dest => dest.Name,
+                otp => otp.MapFrom(src =>src.Title)
                 );
         }
     }
