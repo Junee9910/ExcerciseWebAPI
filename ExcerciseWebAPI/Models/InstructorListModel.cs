@@ -10,6 +10,6 @@ namespace ExcerciseWebAPI.Models
         public int InstructorID { get; set; }
         public string FullName { get; set; }
         public string LocationIn { get; set; }
-        public string Courses { get; set; }
+        public List<CourseByInstructor> Courses { get; set; }
     }
 }

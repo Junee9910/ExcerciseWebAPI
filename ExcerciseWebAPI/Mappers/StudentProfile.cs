@@ -53,7 +53,15 @@ namespace ExcerciseWebAPI.Mappers
                 )
                 .ForMember(
                 dest => dest.LocationIn,
-                otp => otp.MapFrom(s => s.OfficeAssignment.LocationIn)).ReverseMap();
+                otp => otp.MapFrom(s => s.OfficeAssignment.LocationIn))
+                .ForMember(
+                dest => dest.Courses,
+                otp => otp.MapFrom(src => src.CourseAssignments.Select(x => new CourseByInstructor()
+                {
+                    CourseID = x.CourseID,
+                    Name = x.Course.Title,
+                    Department = x.Course.Department.DepartmentName
+                }))).ReverseMap();
             CreateMap<Course, CourseListModel>()
                 .ForMember(
                 dest => dest.Name,

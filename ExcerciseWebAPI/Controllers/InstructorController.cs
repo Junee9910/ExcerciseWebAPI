@@ -22,13 +22,13 @@ namespace ExcerciseWebAPI.Controllers
         [HttpGet("{id}", Name = "GetInstructor")]
         public IActionResult Get(int id)
         {
-            var student = _instructorService.Get(id);
+            var instructor = _instructorService.Get(id);
 
-            if (student == null)
+            if (instructor == null)
             {
                 return NotFound();
             }
-            return Ok(student);
+            return Ok(instructor);
         }
         [HttpGet("list")]
         public ActionResult<IEnumerable<InstructorListModel>> GetList()

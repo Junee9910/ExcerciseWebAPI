@@ -22,20 +22,17 @@ namespace ExcerciseWebAPI.Services
         }
         public InstructorListModel Get(int id)
         {
-            var instructorEntities = _context.Instructors.Where(x => x.InstructorID == id)
-            .Select(x => new InstructorListModel()
-             {
-                 InstructorID = x.InstructorID,
-                 FullName = x.Fullname,
-                 LocationIn = x.OfficeAssignment.LocationIn
-             }).FirstOrDefault();
+            var instructorEntity = _context.Instructors.Include(x=>x.OfficeAssignment)
+            .Include(x=>x.CourseAssignments).ThenInclude(x=>x.Course).ThenInclude(x=>x.Department)
+            .FirstOrDefault(x => x.InstructorID == id);
 
-            //return _mapper.Map<InstructorListModel>(instructorEntities);
-            return instructorEntities;
+            return _mapper.Map<InstructorListModel>(instructorEntity);
         }
         public List<InstructorListModel> GetList()
         {
-            var result = _context.Instructors.Include(x => x.OfficeAssignment)
+            var result = _context.Instructors
+                .Include(x => x.OfficeAssignment)
+                .Include(x=>x.CourseAssignments).ThenInclude(x=>x.Course).ThenInclude(x=>x.Department)
                 .AsQueryable()
                 .OrderBy(x => x.InstructorID)
                 .ToList();
