@@ -8,6 +8,7 @@ namespace ExcerciseWebAPI.Services
 {
     public interface ICourseService
     {
+        CourseModel Get(int id);
         List<CourseListModel> GetList();
     }
 }

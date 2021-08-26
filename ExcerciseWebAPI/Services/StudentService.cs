@@ -22,21 +22,27 @@ namespace ExcerciseWebAPI.Services
             _context = context;
             _mapper = mapper;
         }
-
-        public StudentListModel Get(int id)
+        public StudentModel GetCourse(int id)
         {
-            var entity = _context.Students.Include(x => x.Enrollments)
+            var entity = _context.Students.Include(x=>x.Enrollments).ThenInclude(x=>x.Course)
                 .FirstOrDefault(x => x.StudentID == id);
 
-            return _mapper.Map<StudentListModel>(entity);
+            return _mapper.Map<StudentModel>(entity);
         }
+        //public StudentListModel Get(int id)
+        //{
+        //    var entity = _context.Students
+        //        .FirstOrDefault(x => x.StudentID == id);
+
+        //    return _mapper.Map<StudentListModel>(entity);
+        //}
 
         public List<StudentListModel> GetList(StudentParams param)
         {
             var skip = (param.PageNumber.GetValueOrDefault() - 1) * param.PageSize.GetValueOrDefault();
             var take = param.PageSize.GetValueOrDefault();
 
-            var result = _context.Students.Include(x=>x.Enrollments)
+            var result = _context.Students
                 .AsQueryable()
                 .WhereIf(!string.IsNullOrWhiteSpace(param.Name),
                     x => x.FirstMidName.Contains(param.Name) || x.LastName.Contains(param.Name))

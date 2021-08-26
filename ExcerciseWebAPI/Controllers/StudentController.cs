@@ -23,10 +23,21 @@ namespace ExcerciseWebAPI.Controllers
             _studentService = studentService;
         }
 
-        [HttpGet("{id}", Name = "GetStudent")]
-        public IActionResult Get(int id)
+        //[HttpGet("{id}", Name = "GetStudent")]
+        //public IActionResult Get(int id)
+        //{
+        //    var student = _studentService.Get(id);
+
+        //    if (student == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(student);
+        //}
+        [HttpGet("{id}")]
+        public IActionResult GetCourse(int id)
         {
-            var student = _studentService.Get(id);
+            var student = _studentService.GetCourse(id);
 
             if (student == null)
             {

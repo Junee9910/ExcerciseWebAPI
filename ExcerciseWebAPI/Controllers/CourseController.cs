@@ -17,6 +17,17 @@ namespace ExcerciseWebAPI.Controllers
         {
             _courseService = courseService;
         }
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var course = _courseService.Get(id);
+
+            if (course == null)
+            {
+                return NotFound();
+            }
+            return Ok(course);
+        }
         [HttpGet("list")]
         public ActionResult<IEnumerable<CourseListModel>> GetList()
         {
