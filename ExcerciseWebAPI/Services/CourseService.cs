@@ -22,19 +22,11 @@ namespace ExcerciseWebAPI.Services
         public List<CourseListModel> GetList()
         {
             var result = _context.Courses.Include(x => x.Department)
-                .Select(x => new CourseListModel()
-                {
-                    CourseID = x.CourseID,
-                    Name = x.Title,
-                    Credits=x.Credits,
-                    Department=x.Department.DepartmentName
-                })
                 .AsQueryable()
                 .OrderBy(x => x.CourseID)
                 .ToList();
 
-            //return _mapper.Map<List<InstructorListModel>>(result);
-            return result;
+            return _mapper.Map<List<CourseListModel>>(result);
         }
     }
 }

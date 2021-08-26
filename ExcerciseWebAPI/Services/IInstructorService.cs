@@ -13,6 +13,6 @@ namespace ExcerciseWebAPI.Services
         List<InstructorListModel> GetList();
         InstructorListModel Create(InstructorCreateModel model);
         InstructorListModel Update(InstructorEditModel model);
-        OfficeAssignment Delete(int id);
+        Instructor Delete(int id);
     }
 }

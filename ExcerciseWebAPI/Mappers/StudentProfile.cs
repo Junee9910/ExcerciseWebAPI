@@ -15,8 +15,10 @@ namespace ExcerciseWebAPI.Mappers
             CreateMap<Student, StudentListModel>()
                 .ForMember(
                 dest => dest.FullName,
-                otp => otp.MapFrom(src => $"{src.LastName} {src.FirstMidName}")
-                );
+                otp => otp.MapFrom(src => $"{src.LastName} {src.FirstMidName}"))
+                .ForMember(dest => dest.Grades, otp => otp.MapFrom(s => s.Enrollments.Select(m => new EnrollmentModel() { 
+                    Grade= m.Grade
+                })));
             CreateMap<StudentCreateModel, Student>();
             CreateMap<StudentEditModel, Student>()
                 .ForMember(x => x.StudentID, opt => opt.Ignore());
@@ -48,13 +50,18 @@ namespace ExcerciseWebAPI.Mappers
                 .ForMember(
                 dest => dest.FullName,
                 otp => otp.MapFrom(src => $"{src.LastName} {src.FirstMidName}")
-                );
-                //.ForMember(x=>x.Courses,otp=>otp.MapFrom(src=>$"{src}");
+                )
+                .ForMember(
+                dest => dest.LocationIn,
+                otp => otp.MapFrom(s => s.OfficeAssignment.LocationIn)).ReverseMap();
             CreateMap<Course, CourseListModel>()
                 .ForMember(
                 dest => dest.Name,
                 otp => otp.MapFrom(src =>src.Title)
-                );
+                )
+                .ForMember(
+                dest=>dest.Department,
+                otp=>otp.MapFrom(s=>s.Department.DepartmentName)).ReverseMap();
         }
     }
 }

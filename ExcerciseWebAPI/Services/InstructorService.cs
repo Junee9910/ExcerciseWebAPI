@@ -35,18 +35,11 @@ namespace ExcerciseWebAPI.Services
         }
         public List<InstructorListModel> GetList()
         {
-            var result = _context.Instructors.Include(x => x.OfficeAssignment).Include(x=>x.CourseAssignments).ThenInclude(x=>x.Course)
-                .Select(x => new InstructorListModel()
-                {
-                    InstructorID = x.InstructorID,
-                    FullName = x.Fullname,
-                    LocationIn = x.OfficeAssignment.LocationIn,
-                })
+            var result = _context.Instructors.Include(x => x.OfficeAssignment)
                 .AsQueryable()
                 .OrderBy(x => x.InstructorID)
                 .ToList();
-            //return _mapper.Map<List<InstructorListModel>>(result);
-            return result;
+            return _mapper.Map<List<InstructorListModel>>(result);
         }
         public InstructorListModel Create(InstructorCreateModel model)
         {
@@ -71,17 +64,21 @@ namespace ExcerciseWebAPI.Services
             return _mapper.Map<InstructorListModel>(entity);
         }
 
-        public OfficeAssignment Delete(int id)
+        public Instructor Delete(int id)
         {
-            var entity = _context.OfficeAssignments.FirstOrDefault(x => x.InstructorID == id);
-            if (entity == null)
+            var officeAssignmentEntity = _context.OfficeAssignments.FirstOrDefault(x => x.InstructorID == id);
+            if (officeAssignmentEntity == null)
             {
                 return null;
             }
 
-            _context.OfficeAssignments.Remove(entity);
+            _context.OfficeAssignments.Remove(officeAssignmentEntity);
             _context.SaveChanges();
-            return entity;
+
+            var instructorEntity = _context.Instructors.FirstOrDefault(x => x.InstructorID == id);
+            _context.Instructors.Remove(instructorEntity);
+            _context.SaveChanges();
+            return instructorEntity;
         }
     }
 }

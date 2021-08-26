@@ -9,5 +9,6 @@ namespace ExcerciseWebAPI.Models
     {
         public int StudentID { get; set; }
         public string FullName { get; set; }
+        public List<EnrollmentModel> Grades { get; set; }
     }
 }

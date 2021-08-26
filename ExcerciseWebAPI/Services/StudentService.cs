@@ -25,7 +25,8 @@ namespace ExcerciseWebAPI.Services
 
         public StudentListModel Get(int id)
         {
-            var entity = _context.Students.FirstOrDefault(x => x.StudentID == id);
+            var entity = _context.Students.Include(x => x.Enrollments)
+                .FirstOrDefault(x => x.StudentID == id);
 
             return _mapper.Map<StudentListModel>(entity);
         }
@@ -35,7 +36,8 @@ namespace ExcerciseWebAPI.Services
             var skip = (param.PageNumber.GetValueOrDefault() - 1) * param.PageSize.GetValueOrDefault();
             var take = param.PageSize.GetValueOrDefault();
 
-            var result = _context.Students.AsQueryable()
+            var result = _context.Students.Include(x=>x.Enrollments)
+                .AsQueryable()
                 .WhereIf(!string.IsNullOrWhiteSpace(param.Name),
                     x => x.FirstMidName.Contains(param.Name) || x.LastName.Contains(param.Name))
                 .Skip(skip)
