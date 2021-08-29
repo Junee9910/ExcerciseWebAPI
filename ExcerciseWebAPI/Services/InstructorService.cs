@@ -41,6 +41,7 @@ namespace ExcerciseWebAPI.Services
         public InstructorListModel Create(InstructorCreateModel model)
         {
             var entity = _mapper.Map<Instructor>(model);
+            _context.Instructors.Include(x => x.OfficeAssignment);
             _context.Instructors.Add(entity);
             _context.SaveChanges();
 
@@ -58,24 +59,25 @@ namespace ExcerciseWebAPI.Services
             _mapper.Map(model, entity);
             _context.SaveChanges();
 
+            var office = _context.OfficeAssignments.FirstOrDefault(x => x.InstructorID == model.InstructorID);
+            office.Instructor = entity;
+            _context.SaveChanges();
+
             return _mapper.Map<InstructorListModel>(entity);
         }
 
         public Instructor Delete(int id)
         {
-            var officeAssignmentEntity = _context.OfficeAssignments.FirstOrDefault(x => x.InstructorID == id);
-            if (officeAssignmentEntity == null)
+            var entity = _context.Instructors.Include(x=>x.OfficeAssignment).FirstOrDefault(x => x.InstructorID == id);
+            if (entity == null)
             {
                 return null;
             }
-
-            _context.OfficeAssignments.Remove(officeAssignmentEntity);
+            var office = entity.OfficeAssignment;
+            //entity.OfficeAssignment.Remove(office);
+            _context.Instructors.Remove(entity);
             _context.SaveChanges();
-
-            var instructorEntity = _context.Instructors.FirstOrDefault(x => x.InstructorID == id);
-            _context.Instructors.Remove(instructorEntity);
-            _context.SaveChanges();
-            return instructorEntity;
+            return entity;
         }
     }
 }
