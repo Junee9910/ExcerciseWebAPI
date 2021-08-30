@@ -50,17 +50,13 @@ namespace ExcerciseWebAPI.Services
 
         public InstructorListModel Update(InstructorEditModel model)
         {
-            var entity = _context.Instructors.FirstOrDefault(x => x.InstructorID== model.InstructorID);
+            var entity = _context.Instructors.Include(x=>x.OfficeAssignment).FirstOrDefault(x => x.InstructorID== model.InstructorID);
             if (entity == null)
             {
                 return null;
             }
 
             _mapper.Map(model, entity);
-            _context.SaveChanges();
-
-            var office = _context.OfficeAssignments.FirstOrDefault(x => x.InstructorID == model.InstructorID);
-            office.Instructor = entity;
             _context.SaveChanges();
 
             return _mapper.Map<InstructorListModel>(entity);
@@ -73,7 +69,6 @@ namespace ExcerciseWebAPI.Services
             {
                 return null;
             }
-            var office = entity.OfficeAssignment;
             //entity.OfficeAssignment.Remove(office);
             _context.Instructors.Remove(entity);
             _context.SaveChanges();
