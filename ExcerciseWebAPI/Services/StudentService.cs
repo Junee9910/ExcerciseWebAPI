@@ -22,20 +22,20 @@ namespace ExcerciseWebAPI.Services
             _context = context;
             _mapper = mapper;
         }
-        public StudentModel GetCourse(int id)
-        {
-            var entity = _context.Students.Include(x=>x.Enrollments).ThenInclude(x=>x.Course)
-                .FirstOrDefault(x => x.StudentID == id);
-
-            return _mapper.Map<StudentModel>(entity);
-        }
-        //public StudentListModel Get(int id)
+        //public StudentModel GetCourse(int id)
         //{
-        //    var entity = _context.Students
+        //    var entity = _context.Students.Include(x=>x.Enrollments).ThenInclude(x=>x.Course)
         //        .FirstOrDefault(x => x.StudentID == id);
 
-        //    return _mapper.Map<StudentListModel>(entity);
+        //    return _mapper.Map<StudentModel>(entity);
         //}
+        public StudentListModel Get(int id)
+        {
+            var entity = _context.Students
+                .FirstOrDefault(x => x.StudentID == id);
+
+            return _mapper.Map<StudentListModel>(entity);
+        }
 
         public List<StudentListModel> GetList(StudentParams param)
         {

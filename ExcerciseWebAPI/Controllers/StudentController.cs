@@ -23,21 +23,10 @@ namespace ExcerciseWebAPI.Controllers
             _studentService = studentService;
         }
 
-        //[HttpGet("{id}", Name = "GetStudent")]
-        //public IActionResult Get(int id)
-        //{
-        //    var student = _studentService.Get(id);
-
-        //    if (student == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(student);
-        //}
-        [HttpGet("{id}")]
-        public IActionResult GetCourse(int id)
+        [HttpGet("{id}", Name = "GetStudent")]
+        public IActionResult Get(int id)
         {
-            var student = _studentService.GetCourse(id);
+            var student = _studentService.Get(id);
 
             if (student == null)
             {
@@ -45,6 +34,17 @@ namespace ExcerciseWebAPI.Controllers
             }
             return Ok(student);
         }
+        //[HttpGet("{id}")]
+        //public IActionResult GetCourse(int id)
+        //{
+        //    var student = _studentService.GetCourse(id);
+
+        //    if (student == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(student);
+        //}
 
         [HttpGet("list")]
         public ActionResult<IEnumerable<StudentListModel>> GetList([FromQuery] StudentParams param)
