@@ -34,17 +34,17 @@ namespace ExcerciseWebAPI.Controllers
             }
             return Ok(student);
         }
-        //[HttpGet("{id}")]
-        //public IActionResult GetCourse(int id)
-        //{
-        //    var student = _studentService.GetCourse(id);
+        [HttpGet("GetByCourse")]
+        public IActionResult GetCourse(int id)
+        {
+            var student = _studentService.GetCourse(id);
 
-        //    if (student == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(student);
-        //}
+            if (student == null)
+            {
+                return NotFound();
+            }
+            return Ok(student);
+        }
 
         [HttpGet("list")]
         public ActionResult<IEnumerable<StudentListModel>> GetList([FromQuery] StudentParams param)

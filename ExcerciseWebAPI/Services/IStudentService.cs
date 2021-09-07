@@ -9,7 +9,7 @@ namespace ExcerciseWebAPI.Services
 {
     public interface IStudentService
     {
-        //StudentModel GetCourse(int id);
+        StudentModel GetCourse(int id);
         StudentListModel Get(int id);
         List<StudentListModel> GetList(StudentParams param);
         StudentListModel Create(StudentCreateModel model);
