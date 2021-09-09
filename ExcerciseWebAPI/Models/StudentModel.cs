@@ -7,6 +7,9 @@ namespace ExcerciseWebAPI.Models
 {
     public class StudentModel
     {
+        public int StudentID { get; set; }
+        public string LastName { get; set; }
+        public string FirstMidName { get; set; }
         public List<EnrollmentCourseById> Courses { get; set; }
     }
 }

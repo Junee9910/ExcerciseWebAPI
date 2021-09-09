@@ -77,6 +77,13 @@ namespace ExcerciseWebAPI.Mappers
                 otp=>otp.MapFrom(s=>s.Department.DepartmentName)).ReverseMap();
             CreateMap<Course, CourseModel>()
                 .ForMember(
+                dest => dest.Name,
+                otp => otp.MapFrom(src => src.Title)
+                )
+                .ForMember(
+                dest => dest.Department,
+                otp => otp.MapFrom(s => s.Department.DepartmentName))
+                .ForMember(
                 dest=>dest.Students,
                 otp=>otp.MapFrom(src=>src.Enrollments.Select(x=> new StudentByCourseId()
                 {

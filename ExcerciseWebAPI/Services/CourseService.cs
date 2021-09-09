@@ -20,7 +20,7 @@ namespace ExcerciseWebAPI.Services
             _mapper = mapper;
         }
         public CourseModel Get(int id) {
-            var courseEntity = _context.Courses.Include(x=>x.Enrollments).ThenInclude(x=>x.Student)
+            var courseEntity = _context.Courses.Include(x=>x.Department).Include(x=>x.Enrollments).ThenInclude(x=>x.Student)
             .FirstOrDefault(x => x.CourseID == id);
 
             return _mapper.Map<CourseModel>(courseEntity);
