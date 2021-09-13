@@ -16,7 +16,7 @@ namespace ExcerciseWebAPI.Models
     }
     public class StudentEditModel
     {
-        public int Id { get; set; }
+        public int StudentID { get; set; }
 
         [Required]
         public string LastName { get; set; }

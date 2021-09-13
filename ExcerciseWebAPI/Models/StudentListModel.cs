@@ -8,6 +8,8 @@ namespace ExcerciseWebAPI.Models
     public class StudentListModel
     {
         public int StudentID { get; set; }
+        public string LastName { get; set; }
+        public string FirstMidName { get; set; }
         public string FullName { get; set; }
     }
 }

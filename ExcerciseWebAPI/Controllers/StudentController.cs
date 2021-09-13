@@ -63,7 +63,7 @@ namespace ExcerciseWebAPI.Controllers
         [HttpPut("{id}")]
         public ActionResult Update(int id, StudentEditModel student)
         {
-            if (student.Id != id)
+            if (student.StudentID != id)
             {
                 return BadRequest();
             }

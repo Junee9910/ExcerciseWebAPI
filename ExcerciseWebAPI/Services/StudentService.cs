@@ -65,7 +65,7 @@ namespace ExcerciseWebAPI.Services
 
         public StudentListModel Update(StudentEditModel model)
         {
-            var entity = _context.Students.FirstOrDefault(x => x.StudentID == model.Id);
+            var entity = _context.Students.FirstOrDefault(x => x.StudentID == model.StudentID);
             if (entity == null)
             {
                 return null;
